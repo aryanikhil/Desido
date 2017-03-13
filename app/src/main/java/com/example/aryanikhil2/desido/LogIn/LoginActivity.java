@@ -130,15 +130,15 @@ public class LoginActivity extends AppCompatActivity {
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/nikhildb","postgres","");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
 
-                PreparedStatement pstmt = con.prepareStatement("SELECT cid FROM customers WHERE cusername=? AND cpassword=?");
+                PreparedStatement pstmt = con.prepareStatement("SELECT uid FROM users WHERE username=? AND pass=?");
                 pstmt.setString(1,Params[0]);
                 pstmt.setString(2,Params[1]);
                 ResultSet rs = pstmt.executeQuery();
                 if(rs!=null){
                     rs.next();
-                    return rs.getInt("cid");
+                    return rs.getInt("uid");
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -151,9 +151,9 @@ public class LoginActivity extends AppCompatActivity {
         public Integer doInBackground(Integer... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/nikhildb","postgres","");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
 
-                PreparedStatement pstmt = con.prepareStatement("DELETE FROM customers WHERE cid=?");
+                PreparedStatement pstmt = con.prepareStatement("DELETE FROM users WHERE uid=?");
                 pstmt.setInt(1,Params[0]);
                 int count = pstmt.executeUpdate();
                 return count;
@@ -171,13 +171,13 @@ public class LoginActivity extends AppCompatActivity {
         public String doInBackground(Integer... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/nikhildb","postgres","");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
 
-                PreparedStatement pstmt = con.prepareStatement("SELECT cname FROM customers WHERE cid=?");
+                PreparedStatement pstmt = con.prepareStatement("SELECT name FROM users WHERE uid=?");
                 pstmt.setInt(1,Params[0]);
                 ResultSet rs = pstmt.executeQuery();
                 rs.next();
-                return rs.getString("cname");
+                return rs.getString("name");
             }catch (Exception e){
                 e.printStackTrace();
             }

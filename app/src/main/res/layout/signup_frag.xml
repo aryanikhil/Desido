@@ -111,14 +111,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" >
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="number"
-            android:ems="10"
-            android:hint="Mobile"
-            android:id="@+id/editText7"
-            android:layout_weight="1" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -131,14 +123,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" >
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="textMultiLine"
-            android:hint="Address"
-            android:singleLine="false"
-            android:id="@+id/editText3"
-            android:layout_weight="1" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout

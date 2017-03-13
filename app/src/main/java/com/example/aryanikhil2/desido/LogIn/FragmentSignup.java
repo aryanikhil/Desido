@@ -35,9 +35,7 @@ public class FragmentSignup extends Fragment {
         uName = (EditText)view.findViewById(R.id.editText5);
         pass = (EditText)view.findViewById(R.id.editText6);
         cPass = (EditText)view.findViewById(R.id.editText8);
-        mobile = (EditText)view.findViewById(R.id.editText7);
         email = (EditText)view.findViewById(R.id.editText9);
-        address = (EditText)view.findViewById(R.id.editText3);
         reg = (Button)view.findViewById(R.id.button);
 
         reg.setOnClickListener(new View.OnClickListener() {
@@ -47,7 +45,7 @@ public class FragmentSignup extends Fragment {
                 String pass2 = cPass.getText().toString();
 
                 if(pass1.equals(pass2)){
-                    if(hasContent(name) && hasContent(uName) && hasContent(pass) && hasContent(cPass) && hasContent(email) && hasContent(address) && hasContent(mobile)){
+                    if(hasContent(name) && hasContent(uName) && hasContent(pass) && hasContent(cPass) && hasContent(email) ){
                         Boolean validated = null;
                         try{
                             validated = new Validate().execute(uName.getText().toString()).get();
@@ -57,7 +55,7 @@ public class FragmentSignup extends Fragment {
                         if(validated){
                             Integer created = null;
                             try{
-                                created = new CreateNew().execute(name.getText().toString(),uName.getText().toString(),pass.getText().toString(),email.getText().toString(),address.getText().toString(),mobile.getText().toString()).get();
+                                created = new CreateNew().execute(name.getText().toString(),uName.getText().toString(),email.getText().toString(),pass.getText().toString()).get();
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -86,14 +84,15 @@ public class FragmentSignup extends Fragment {
             return false;
         }
     }
+
     class Validate extends AsyncTask<String,Void,Boolean> {
 
         public Boolean doInBackground(String... params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/nikhildb","postgres","");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
 
-                PreparedStatement pstmt = con.prepareStatement("SELECT cid FROM customers WHERE cusername=?");
+                PreparedStatement pstmt = con.prepareStatement("SELECT uid FROM users WHERE username=?");
                 pstmt.setString(1,params[0]);
                 ResultSet rs = pstmt.executeQuery();
                 if(!rs.next()){
@@ -115,17 +114,13 @@ public class FragmentSignup extends Fragment {
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/nikhildb","postgres","");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
 
-                PreparedStatement pstmt = con.prepareStatement("INSERT INTO customers(cname,cusername,cpassword,cemail,caddress,cmobile) VALUES(?,?,?,?,?,?)");
-                String[] add = {Params[4]};
-                Array arrayAdd = con.createArrayOf("text",add);
+                PreparedStatement pstmt = con.prepareStatement("INSERT INTO users(name,username,email,pass) VALUES(?,?,?,?)");
                 pstmt.setString(1,Params[0]);
                 pstmt.setString(2,Params[1]);
                 pstmt.setString(3,Params[2]);
                 pstmt.setString(4,Params[3]);
-                pstmt.setArray(5,arrayAdd);
-                pstmt.setString(6,Params[5]);
                 return pstmt.executeUpdate();
             }catch (Exception e){
                 e.printStackTrace();
