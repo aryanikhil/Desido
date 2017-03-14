@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.aryanikhil2.desido.FragmentsMain.FragmentHome;
 import com.example.aryanikhil2.desido.LogIn.LoginActivity;
@@ -84,6 +85,20 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }else if(id == R.id.action_logout){
+            SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.MyPrefs, Context.MODE_PRIVATE);
+            int uId = sharedPreferences.getInt("userid",0);
+            if(uId!=0) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
+                name.setText(sharedPreferences.getString("name", "Welcome Guest"));
+                uName.setText(sharedPreferences.getString("username", null));
+                Toast.makeText(this, "Successfully Logged Out!!!", Toast.LENGTH_LONG).show();
+            }
+            else{
+                Toast.makeText(this, "You Are Already Logged Out!!!", Toast.LENGTH_LONG).show();
+            }
         }
 
         return super.onOptionsItemSelected(item);
