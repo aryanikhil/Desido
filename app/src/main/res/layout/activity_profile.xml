@@ -199,7 +199,7 @@
         android:background="#000000"
         android:layout_weight="0.00"
         android:textAlignment="center"
-        android:id="@+id/view6"
+        android:id="@+id/view7"
         android:layout_below="@+id/save"
         android:layout_alignParentRight="true"
         android:layout_marginTop="5dp" />

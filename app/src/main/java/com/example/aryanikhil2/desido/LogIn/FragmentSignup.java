@@ -91,7 +91,7 @@ public class FragmentSignup extends Fragment {
         public Boolean doInBackground(String... params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
                 if(con==null){
                     Log.e("Connection status","Error");
                 }
@@ -117,7 +117,9 @@ public class FragmentSignup extends Fragment {
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+              //  Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+
                 if(con==null){
                     Log.e("Connection status","Error");
                 }

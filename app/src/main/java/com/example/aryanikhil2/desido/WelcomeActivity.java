@@ -4,11 +4,13 @@ package com.example.aryanikhil2.desido;
  * Created by sahil on 8/2/17.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.aryanikhil2.desido.LogIn.FragmentSignup;
+import com.example.aryanikhil2.desido.LogIn.LoginActivity;
+
 public class WelcomeActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
@@ -31,6 +36,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private int[] layouts;
     private Button btnSkip, btnNext;
     private PrefManager prefManager;
+    private Button signup,login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +104,9 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
     }
 
     private void addBottomDots(int currentPage) {
@@ -146,6 +155,25 @@ public class WelcomeActivity extends AppCompatActivity {
                 btnNext.setText(getString(R.string.next));
                 btnSkip.setVisibility(View.VISIBLE);
             }
+
+            signup = (Button) findViewById(R.id.home_signup);
+            login = (Button) findViewById(R.id.login);
+            signup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FragmentSignup s = new FragmentSignup();
+
+                    getSupportFragmentManager().beginTransaction().replace(R.id.relView,s).commit();
+                }
+            });
+
+            login.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+                }
+            });
+
         }
 
         @Override
@@ -185,6 +213,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
             View view = layoutInflater.inflate(layouts[position], container, false);
             container.addView(view);
+
 
             return view;
         }

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,9 +41,11 @@ import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 import java.util.function.LongFunction;
 
 import static com.example.aryanikhil2.desido.R.id.gender;
@@ -54,39 +57,43 @@ import static com.example.aryanikhil2.desido.R.id.gender;
 
 public class ProfileActivity extends android.support.v4.app.Fragment implements View.OnClickListener {
 
-    public ProfileActivity(){
+    public ProfileActivity() {
 
 
     }
+
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     public static final String MyPrefs = "NikPrefs";
-    TextView name,uname,upload,gender1,dob,mobile,membership;
+    TextView name, uname, upload, gender1, dob, mobile, membership;
     int uid1;
-    String uid,name1,gender,yearOfBirth,careOf,location,villageTehsil,postOffice,district,state,postCode;
+    String uid, name1, gender, yearOfBirth, careOf, location, villageTehsil, postOffice, district, state, postCode;
     ImageView pic;
-public String username;
-
+    Button save, apply_semipro;
+    public String username;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View profile =  inflater.inflate(R.layout.activity_profile, container, false);
+        View profile = inflater.inflate(R.layout.activity_profile, container, false);
 
 
         name = (TextView) profile.findViewById(R.id.name);
-        uname   = (TextView)profile.findViewById(R.id.username);
-        upload = (TextView)profile.findViewById(R.id.upload);
+        uname = (TextView) profile.findViewById(R.id.username);
+        upload = (TextView) profile.findViewById(R.id.upload);
         pic = (ImageView) profile.findViewById(R.id.profilepic);
-        gender1 =(TextView) profile.findViewById(R.id.gender);
+        gender1 = (TextView) profile.findViewById(R.id.gender);
         dob = (TextView) profile.findViewById(R.id.dob);
         mobile = (TextView) profile.findViewById(R.id.mobile);
-        membership=(TextView) profile.findViewById(R.id.membership);
+        membership = (TextView) profile.findViewById(R.id.membership);
+        save = (Button) profile.findViewById(R.id.save);
+        apply_semipro = (Button) profile.findViewById(R.id.semipro);
+
 
         SharedPreferences sharedpreferences = getActivity().getSharedPreferences(LoginActivity.MyPrefs, Context.MODE_PRIVATE);
-        uid1 = sharedpreferences.getInt("userid",-1);
-        if(uid1 != -1) {
+        uid1 = sharedpreferences.getInt("userid", -1);
+        if (uid1 != -1) {
             // do for the profileT
             name.setText(sharedpreferences.getString("name", ""));
             uname.setText(sharedpreferences.getString("username", ""));
@@ -94,10 +101,9 @@ public String username;
             gender1.setText(sharedpreferences.getString("gender", ""));
             dob.setText(sharedpreferences.getString("dob", ""));
 
-        }
-        else{
-            startActivity(new Intent(getActivity(),MainActivity.class));
-            Toast.makeText(profile.getContext(),"Please login for Seeing your profile!!",Toast.LENGTH_LONG).show();
+        } else {
+            startActivity(new Intent(getActivity(), MainActivity.class));
+            Toast.makeText(profile.getContext(), "Please login for Seeing your profile!!", Toast.LENGTH_LONG).show();
         }
 
         upload.setOnClickListener(new View.OnClickListener() {
@@ -106,15 +112,36 @@ public String username;
                 scanQRCode();
             }
         });
+        final Integer[] uuid = new Integer[1];
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                try {
+                  uuid[0] = new Verify().execute(username).get();
+                    Log.e("uuid",String.valueOf(uuid[0]));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                uploadId ui = new uploadId();
+//                Log.e("hskjhkhkjh", gender);
+                ui.execute(sharedpreferences.getString("uid",""), sharedpreferences.getString("gender",""),
+                        sharedpreferences.getString("location",""),sharedpreferences.getString("username",""));
+            }
+        });
+
 
 
         return profile;
     }
 
 
-    private void scanQRCode(){
+    private void scanQRCode() {
 
-        IntentIntegrator integrator = new IntentIntegrator(getActivity()){
+        IntentIntegrator integrator = new IntentIntegrator(getActivity()) {
             @Override
             protected void startActivityForResult(Intent intent, int code) {
                 ProfileActivity.this.startActivityForResult(intent, code);
@@ -128,11 +155,9 @@ public String username;
         integrator.initiateScan();
 
     }
+
     @Override
     public void onClick(View view) {
-
-
-
 
 
     }
@@ -143,19 +168,13 @@ public String username;
         if (result != null) {
             if (result.getContents() == null) {
                 Toast.makeText(getContext(), "You cancelled the scanning", Toast.LENGTH_LONG).show();
-                try {
-                    String text = getStringFromFile("/home/sahil/AndroidStudioProjects/Desido/app/src/main/res/values/aadhar.txt");
-                    processScannedData(text);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 startActivity(new Intent(getActivity(), MainActivity.class));
             } else {
-                Log.e("Result",result.getContents());
+                Log.e("Result", result.getContents());
                 Toast.makeText(getContext(), result.getContents(), Toast.LENGTH_LONG).show();
                 //processScannedData(result.getContents());
                 try {
-                    processScannedData(getStringFromFile(result.getContents()));
+                    processScannedData(result.getContents());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -166,8 +185,7 @@ public String username;
     }
 
 
-
-    protected void processScannedData(String scanData){
+    protected void processScannedData(String scanData) {
 
         XmlPullParserFactory pullParserFactory;
         try {
@@ -180,49 +198,48 @@ public String username;
             // parse the XML
             int eventType = parser.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
-                if(eventType == XmlPullParser.START_DOCUMENT) {
-                    Log.d("Rajdeol","Start document");
-                } else if(eventType == XmlPullParser.START_TAG) {
+                if (eventType == XmlPullParser.START_DOCUMENT) {
+                    Log.d("Rajdeol", "Start document");
+                } else if (eventType == XmlPullParser.START_TAG) {
                     // extract data from tag
                     //uid
                     uid = parser.getAttributeValue(0);
-                    Log.e("uid",uid);
+                    Log.e("uid", uid);
                     //name
                     name1 = parser.getAttributeValue(1);
-                    Log.e("name",name1);
+                    Log.e("name", name1);
                     //gender
                     gender = parser.getAttributeValue(2);
-                    Log.e("gender",gender);
+                    Log.e("gender", gender);
                     // year of birth
                     yearOfBirth = parser.getAttributeValue(3);
-                    Log.e("year of birth",yearOfBirth);
+                    Log.e("year of birth", yearOfBirth);
                     // care of
                     careOf = parser.getAttributeValue(4);
-                    Log.e("careof",careOf);
-
-                    location =parser.getAttributeName(5);
+                    Log.e("careof", careOf);
                     //location
-                    Log.e("location",location);
-
+                    location = parser.getAttributeName(5);
+                    Log.e("location", location);
                     // village Tehsil
                     villageTehsil = parser.getAttributeValue(6);
-                    Log.e("village tehsil",villageTehsil);
+                    Log.e("village tehsil", villageTehsil);
                     // Post Office
                     postOffice = parser.getAttributeValue(7);
-                    Log.e("postoffice",postOffice);
+                    Log.e("postoffice", postOffice);
                     // district
                     district = parser.getAttributeValue(8);
-                    Log.e("district",district);
+                    Log.e("district", district);
                     // state
                     state = parser.getAttributeValue(9);
-                    Log.e("state",state);
+                    Log.e("state", state);
                     // Post Code
                     postCode = parser.getAttributeValue(10);
-                    Log.e("postCode",postCode);
-                } else if(eventType == XmlPullParser.END_TAG) {
-                    Log.d("Rajdeol","End tag "+parser.getName());
-                } else if(eventType == XmlPullParser.TEXT) {
-                    Log.d("Rajdeol","Text "+parser.getText());}
+                    Log.e("postCode", postCode);
+                } else if (eventType == XmlPullParser.END_TAG) {
+                    Log.d("Rajdeol", "End tag " + parser.getName());
+                } else if (eventType == XmlPullParser.TEXT) {
+                    Log.d("Rajdeol", "Text " + parser.getText());
+                }
                 // update eventType
                 eventType = parser.next();
             }
@@ -230,27 +247,37 @@ public String username;
 
             // display the data on screen
 
-            uploadId ui = new uploadId();
-           ui.execute(uid,gender,yearOfBirth,location,username);
+
             //ui.execute(21321,"M",1997,"ghar","sahil ayank");
 
-            Log.e("shared preferneces",uid);
+            Log.e("shared preferneces", uid);
 
-            sharedPreferences = getActivity().getSharedPreferences(MyPrefs,Context.MODE_PRIVATE);
-            editor  = sharedPreferences.edit();
-            editor.putString("gender",gender);
-            editor.putString("dob",yearOfBirth);
+            sharedPreferences = getActivity().getSharedPreferences(MyPrefs, Context.MODE_PRIVATE);
+            editor = sharedPreferences.edit();
+            editor.putString("gender", gender);
+            editor.putString("uid",uid);
+            editor.putString("location",location);
+            editor.putString("dob", yearOfBirth);
             editor.commit();
+
+
+
+            apply_semipro.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
         } catch (XmlPullParserException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }// EO function
+}
 
 
-
-
+/*
     public static String convertStreamToString(InputStream is) throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
@@ -271,10 +298,10 @@ public String username;
         return ret;
     }
 }
+*/
 
-
-class uploadId extends AsyncTask<String,Boolean,Boolean>{
-  private ProgressDialog progressDialog;
+class uploadId extends AsyncTask<String,Boolean,Boolean> {
+    private ProgressDialog progressDialog;
     Context context;
 
 
@@ -284,7 +311,7 @@ class uploadId extends AsyncTask<String,Boolean,Boolean>{
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
-       this.progressDialog.dismiss();
+        //  this.progressDialog.dismiss();
         super.onPostExecute(aBoolean);
     }
 
@@ -293,35 +320,64 @@ class uploadId extends AsyncTask<String,Boolean,Boolean>{
 
         try {
             Class.forName("org.postgresql.Driver");
-            Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
-            if(con==null){
-                Log.e("Connection status","error");
+            Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido", "student", "student");
+            if (con == null) {
+                Log.e("Connection status", "error");
             }
 
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO users(verify_id,gender,dob,paddr) VALUES(?,?,?,?) where username=?");
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO users (verify_id,gender,paddr) VALUES(?,?,?) " +"WHERE username="+strings[3]);
+            pstmt.setString(1, strings[0]);
+            pstmt.setString(2, strings[1]);
+            pstmt.setString(3, strings[2]);
 
+//            pstmt.setString(5, strings[4]);
+            if (pstmt.executeUpdate() != 0) {
 
-            pstmt.setInt(1, Integer.parseInt(strings[0]));
-            pstmt.setString(2,strings[1]);
-            pstmt.setString(3,strings[2]);
-            pstmt.setString(4,strings[3]);
-            pstmt.setString(5,strings[4]);
-            pstmt.executeUpdate();
-            return true;
-        }catch (Exception e){
+                //Toast.makeText(getContext(),"Data updated Successfully on server..",Toast.LENGTH_LONG).show();
+                Log.e("Data updation", "Data updation successful");
+
+                return true;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+//        Toast.makeText(getContext(),"Data not updated on server..",Toast.LENGTH_LONG).show();
+        Log.e("Data updation", "Data updation not successful");
         return false;
     }
 
     @Override
     protected void onPreExecute() {
 
-        this.progressDialog.setMessage("Uploading the ID...");
-        this.progressDialog.show();
+        //this.progressDialog.setMessage("Uploading the ID...");
+        //this.progressDialog.show();
         super.onPreExecute();
     }
 
 
 
+}
+ class Verify extends AsyncTask<String,Void,Integer>{
+    public Integer doInBackground(String... Params){
+        try {
+            Class.forName("org.postgresql.Driver");
+            // Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+            Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+
+            if(con==null){
+                Log.e("Connection status","Error");
+            }
+
+            PreparedStatement pstmt = con.prepareStatement("SELECT uid FROM users WHERE username=?");
+            pstmt.setString(1,Params[0]);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs!=null){
+                rs.next();
+                return rs.getInt("uid");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

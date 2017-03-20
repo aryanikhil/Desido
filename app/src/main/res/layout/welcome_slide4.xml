@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/bg_screen1">
 
     <LinearLayout
@@ -28,5 +29,43 @@
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true" />
 
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/login"
+        style="@android:style/Widget.Material.Button.Colored"
+        android:background="@android:color/white"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+        android:textColor="@color/colorAccent"
+        tools:textStyle="italic"
+        android:textIsSelectable="false"
+        android:elevation="15dp"
+        android:layout_alignBaseline="@+id/home_signup"
+        android:layout_alignBottom="@+id/home_signup"
+        android:layout_alignRight="@+id/imageView2"
+        android:layout_alignEnd="@+id/imageView2"
+        android:text="LOG IN"
+        tools:targetApi="m" />
+
+    <Button
+        android:text="SIGN UP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/home_signup"
+        style="@android:style/Widget.Material.Button.Colored"
+        android:background="@android:color/white"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+        android:textColor="@color/colorAccent"
+        tools:textStyle="italic"
+        android:textIsSelectable="false"
+        android:elevation="15dp"
+        tools:targetApi="m"
+        android:layout_marginTop="46dp"
+        android:layout_below="@+id/imageView2"
+        android:layout_alignLeft="@+id/imageView2"
+        android:layout_alignStart="@+id/imageView2" />
 
 </RelativeLayout>
