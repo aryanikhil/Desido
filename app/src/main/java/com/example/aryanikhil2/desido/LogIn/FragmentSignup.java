@@ -90,7 +90,7 @@ public class FragmentSignup extends Fragment {
         public Boolean doInBackground(String... params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
 
                 PreparedStatement pstmt = con.prepareStatement("SELECT uid FROM users WHERE username=?");
                 pstmt.setString(1,params[0]);
@@ -114,7 +114,7 @@ public class FragmentSignup extends Fragment {
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
 
                 PreparedStatement pstmt = con.prepareStatement("INSERT INTO users(name,username,email,pass) VALUES(?,?,?,?)");
                 pstmt.setString(1,Params[0]);
