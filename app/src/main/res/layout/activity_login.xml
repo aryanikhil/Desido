@@ -1,126 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/rel_login"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
+    android:layout_height="match_parent"
+    android:id="@+id/login_fragment"
+    android:background="#FF7000">
+
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/desido"
+        android:id="@+id/imageView5"
+        android:layout_marginBottom="421dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
 
     <TextView
+        android:text="  and privacy policy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Please Log In"
-        android:id="@+id/textView18"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp" />
+        android:id="@+id/textView5"
+        android:textSize="12sp"
+        android:layout_alignBaseline="@+id/textView2"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_toRightOf="@+id/imageView5"
+        android:layout_toEndOf="@+id/imageView5" />
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <TextView
+        android:text="   terms of service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3"
+        android:textSize="12sp"
+        android:layout_alignBaseline="@+id/textView2"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_toLeftOf="@+id/textView5"
+        android:layout_toStartOf="@+id/textView5" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linearLayout2"
-        android:layout_marginTop="37dp"
-        android:layout_below="@+id/textView18"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true">
+        android:layout_marginBottom="49dp"
+        android:id="@+id/textView2"
+        android:text="   By signing in, you agree with our"
+        android:textSize="12sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Username - "
-            android:id="@+id/textView19" />
+    <EditText
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:inputType="textPassword"
+        android:background="#FFAE00"
+        android:ems="10"
+        android:textColorHint="#ffffff"
+        android:textStyle="italic"
+        android:id="@+id/editText10"
+        android:hint="       Password"
+        android:layout_below="@+id/editText2"
+        android:layout_alignLeft="@+id/editText2"
+        android:layout_alignStart="@+id/editText2"
+        android:layout_alignRight="@+id/editText2"
+        android:layout_alignEnd="@+id/editText2" />
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:layout_weight="1" />
-    </LinearLayout>
+    <ImageButton
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/signin"
+        android:layout_marginBottom="25dp"
+        android:id="@+id/imageButton3"
+        android:layout_above="@+id/textView5"
+        android:layout_centerHorizontal="true" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <ImageView
+        app:srcCompat="@drawable/image"
+        android:id="@+id/imageView7"
+        android:layout_marginBottom="61dp"
+        android:src="@drawable/image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_above="@+id/editText10"
+        android:layout_alignLeft="@+id/imageView5"
+        android:layout_alignStart="@+id/imageView5" />
+
+    <EditText
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/editText2"
+        android:hint="                Name/Email"
+        android:textColorHint="#FFFFFF"
+        android:textStyle="italic"
+        style="@style/Widget.AppCompat.AutoCompleteTextView"
+        android:background="#FF9500"
+        android:layout_height="50dp"
+
+        android:layout_width="250dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="NOt Registered? Sign up Here"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/linearLayout"
-        android:layout_marginTop="42dp"
-        android:layout_below="@+id/linearLayout2"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true">
+        android:layout_marginTop="15dp"
+        android:id="@+id/signup"
+        android:layout_below="@+id/textView5"
+        android:layout_alignRight="@+id/imageButton3"
+        android:layout_alignEnd="@+id/imageButton3" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Password - "
-            android:id="@+id/textView20" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/editText2"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/linearLayout"
-        android:layout_centerHorizontal="true">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Log In"
-            android:id="@+id/button3"
-            android:layout_marginLeft="40dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_alignTop="@+id/textView21"
-            android:layout_toStartOf="@+id/textView21"
-            android:layout_toLeftOf="@+id/textView21" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign Up"
-            android:id="@+id/button4"
-            android:layout_marginStart="38dp"
-            android:layout_marginLeft="38dp"
-            android:layout_marginRight="44dp"
-            android:layout_alignTop="@+id/textView21"
-            android:layout_toEndOf="@+id/textView21"
-            android:layout_toRightOf="@+id/textView21" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="or"
-            android:id="@+id/textView21"
-            android:textSize="30dp"
-            android:layout_marginTop="75dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete Your Account"
-            android:id="@+id/button5"
-            android:layout_marginBottom="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
-    </RelativeLayout>
-    </RelativeLayout>
 </RelativeLayout>

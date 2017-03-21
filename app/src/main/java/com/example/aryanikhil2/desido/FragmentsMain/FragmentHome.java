@@ -3,6 +3,8 @@ package com.example.aryanikhil2.desido.FragmentsMain;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
+import static android.graphics.BitmapFactory.decodeFile;
 
 /**
  * Created by Nikhil on 02-07-2016.
@@ -40,6 +44,8 @@ public class FragmentHome extends Fragment {
     String mCurrentPhotoPath;
     File photoFile = null;
     int uid;
+
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView =  inflater.inflate(R.layout.home_frag, container, false);
 
@@ -64,12 +70,18 @@ public class FragmentHome extends Fragment {
         uploadPic.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View view){
-                Toast.makeText(getContext(),"Working2",Toast.LENGTH_LONG).show();
+                UploadImageFromGallery up = new UploadImageFromGallery();
+                getFragmentManager().beginTransaction().replace(R.id.home_fragment,up).commit();
+
+                Toast.makeText(getContext(),"Get image from gallery",Toast.LENGTH_LONG).show();
             }
         });
 
         return rootView;
     }
+
+
+
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

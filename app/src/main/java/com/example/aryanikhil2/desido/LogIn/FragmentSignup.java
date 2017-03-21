@@ -3,11 +3,13 @@ package com.example.aryanikhil2.desido.LogIn;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.aryanikhil2.desido.R;
@@ -23,20 +25,20 @@ import java.sql.ResultSet;
  */
 public class FragmentSignup extends Fragment {
     EditText name,uName,pass,cPass,mobile,email,address;
-    Button reg;
+    ImageButton reg;
 
     public FragmentSignup(){
 
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.signup_frag, container, false);
-        name = (EditText)view.findViewById(R.id.editText4);
-        uName = (EditText)view.findViewById(R.id.editText5);
-        pass = (EditText)view.findViewById(R.id.editText6);
-        cPass = (EditText)view.findViewById(R.id.editText8);
-        email = (EditText)view.findViewById(R.id.editText9);
-        reg = (Button)view.findViewById(R.id.button);
+        View view = inflater.inflate(R.layout.signup, container, false);
+        name = (EditText)view.findViewById(R.id.editText2);
+        uName = (EditText)view.findViewById(R.id.editText3);
+        pass = (EditText)view.findViewById(R.id.editText10);
+        cPass = (EditText)view.findViewById(R.id.editText11);
+        email = (EditText)view.findViewById(R.id.editText7);
+        reg = (ImageButton)view.findViewById(R.id.button);
 
         reg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +93,9 @@ public class FragmentSignup extends Fragment {
             try {
                 Class.forName("org.postgresql.Driver");
                 Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
-
+                if(con==null){
+                    Log.e("Connection status","Error");
+                }
                 PreparedStatement pstmt = con.prepareStatement("SELECT uid FROM users WHERE username=?");
                 pstmt.setString(1,params[0]);
                 ResultSet rs = pstmt.executeQuery();
@@ -114,8 +118,12 @@ public class FragmentSignup extends Fragment {
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
+              //  Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
                 Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
 
+                if(con==null){
+                    Log.e("Connection status","Error");
+                }
                 PreparedStatement pstmt = con.prepareStatement("INSERT INTO users(name,username,email,pass) VALUES(?,?,?,?)");
                 pstmt.setString(1,Params[0]);
                 pstmt.setString(2,Params[1]);

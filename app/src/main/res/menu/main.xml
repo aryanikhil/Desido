@@ -11,4 +11,11 @@
         android:orderInCategory="200"
         android:title="Log Out"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_openRight"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        android:icon="@drawable/bell_ring_outline"
+        app:showAsAction="always" />
 </menu>
