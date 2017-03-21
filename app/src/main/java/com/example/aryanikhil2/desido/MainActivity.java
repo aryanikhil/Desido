@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.aryanikhil2.desido.FragmentsMain.FragmentFeeds;
 import com.example.aryanikhil2.desido.FragmentsMain.FragmentHome;
 import com.example.aryanikhil2.desido.FragmentsMain.ProfileActivity;
 import com.example.aryanikhil2.desido.LogIn.LoginActivity;
@@ -58,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
                     FragmentHome FH = new FragmentHome();
                     getSupportFragmentManager().beginTransaction().replace(R.id.relView, FH).commit();
                 } else if (id == R.id.nav_feeds) {
-
+                    FragmentFeeds ff = new FragmentFeeds();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.relView,ff).commit();
                 } else if (id == R.id.nav_hireus) {
 
                 } else if (id == R.id.nav_profile) {
