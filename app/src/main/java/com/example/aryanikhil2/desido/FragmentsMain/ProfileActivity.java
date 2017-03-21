@@ -49,6 +49,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.LongFunction;
 
 import static com.example.aryanikhil2.desido.R.id.gender;
+import static com.example.aryanikhil2.desido.R.id.start;
 
 
 /**
@@ -127,9 +128,11 @@ public class ProfileActivity extends android.support.v4.app.Fragment implements 
                     e.printStackTrace();
                 }
                 uploadId ui = new uploadId();
-//                Log.e("hskjhkhkjh", gender);
-                ui.execute(sharedpreferences.getString("uid",""), sharedpreferences.getString("gender",""),
+
+                ui.execute(sharedpreferences.getString("uid",""), sharedpreferences.getString("gender","").trim() ,
                         sharedpreferences.getString("location",""),sharedpreferences.getString("username",""));
+                getActivity().finish();
+                startActivity(new Intent(getActivity(),MainActivity.class));
             }
         });
 
@@ -175,6 +178,10 @@ public class ProfileActivity extends android.support.v4.app.Fragment implements 
                 //processScannedData(result.getContents());
                 try {
                     processScannedData(result.getContents());
+                    ProfileActivity pf = new ProfileActivity();
+                    getFragmentManager().beginTransaction().replace(R.id.profile_fragment,pf).commit();
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -218,7 +225,7 @@ public class ProfileActivity extends android.support.v4.app.Fragment implements 
                     careOf = parser.getAttributeValue(4);
                     Log.e("careof", careOf);
                     //location
-                    location = parser.getAttributeName(5);
+                    location = parser.getAttributeValue(5);
                     Log.e("location", location);
                     // village Tehsil
                     villageTehsil = parser.getAttributeValue(6);
@@ -277,29 +284,6 @@ public class ProfileActivity extends android.support.v4.app.Fragment implements 
 }
 
 
-/*
-    public static String convertStreamToString(InputStream is) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
-        }
-        reader.close();
-        return sb.toString();
-    }
-
-    public static String getStringFromFile (String filePath) throws Exception {
-        File fl = new File(filePath);
-        FileInputStream fin = new FileInputStream(fl);
-        String ret = convertStreamToString(fin);
-        //Make sure you close all streams.
-        fin.close();
-        return ret;
-    }
-}
-*/
-
 class uploadId extends AsyncTask<String,Boolean,Boolean> {
     private ProgressDialog progressDialog;
     Context context;
@@ -325,12 +309,11 @@ class uploadId extends AsyncTask<String,Boolean,Boolean> {
                 Log.e("Connection status", "error");
             }
 
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO users (verify_id,gender,paddr) VALUES(?,?,?) " +"WHERE username="+strings[3]);
+            PreparedStatement pstmt = con.prepareStatement("UPDATE users SET verify_id=?,gender=?,paddr=? WHERE username=?");
             pstmt.setString(1, strings[0]);
             pstmt.setString(2, strings[1]);
             pstmt.setString(3, strings[2]);
-
-//            pstmt.setString(5, strings[4]);
+            pstmt.setString(4, strings[3]);
             if (pstmt.executeUpdate() != 0) {
 
                 //Toast.makeText(getContext(),"Data updated Successfully on server..",Toast.LENGTH_LONG).show();

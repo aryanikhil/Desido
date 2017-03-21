@@ -11,8 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.aryanikhil2.desido.R;
@@ -22,10 +25,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
     EditText name,pass;
-    Button logIn,signUp,delete;
+   // Button logIn,signUp,delete;
     Intent intent;
+    TextView signup;
+    ImageButton signin;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     public static final String MyPrefs = "NikPrefs";
@@ -33,15 +38,17 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
 
-        name = (EditText)findViewById(R.id.editText);
-        pass = (EditText)findViewById(R.id.editText2);
-        logIn = (Button)findViewById(R.id.button3);
-        signUp = (Button)findViewById(R.id.button4);
+        name = (EditText) findViewById(R.id.editText2);
+        pass = (EditText) findViewById(R.id.editText10);
+        signin = (ImageButton) findViewById(R.id.imageButton3);
+        signup = (TextView) findViewById(R.id.signup);
+     /*   signUp = (Button)findViewById(R.id.button4);
         delete = (Button)findViewById(R.id.button5);
-
-        signUp.setOnClickListener(new OnClickListener() {
+*/
+      /*  signUp.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentSignup FS = new FragmentSignup();
@@ -49,40 +56,42 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        logIn.setOnClickListener(new OnClickListener() {
+        */
+        signup.setOnClickListener(this);
+
+        signin.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 String uName = name.getText().toString();
                 String uPass = pass.getText().toString();
                 Integer uId = null;
-                try{
-                    uId = new Verify().execute(uName,uPass).get();
-                }catch (Exception e){
+                try {
+                    uId = new Verify().execute(uName, uPass).get();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if(uId!=0){
+                if (uId != 0) {
                     sharedPreferences = getSharedPreferences(MyPrefs, Context.MODE_PRIVATE);
                     editor = sharedPreferences.edit();
-                    editor.putInt("userid",uId);
+                    editor.putInt("userid", uId);
                     String name = null;
-                    try{
+                    try {
                         name = new GetName().execute(uId).get();
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    editor.putString("name",name);
-                    editor.putString("username",uName);
+                    editor.putString("name", name);
+                    editor.putString("username", uName);
                     editor.commit();
-                    Toast.makeText(getApplicationContext(),"Sign In Successful!!!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Sign In Successful!!!", Toast.LENGTH_LONG).show();
                     finish();
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),"Username or Password Mismatch. Please try again.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Username or Password Mismatch. Please try again.", Toast.LENGTH_LONG).show();
                 }
             }
         });
 
-        delete.setOnClickListener(new OnClickListener() {
+  /*     delete.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 String uName = name.getText().toString();
@@ -126,8 +135,19 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+*/
+    }
 
-   public class Verify extends AsyncTask<String,Void,Integer>{
+    @Override
+    public void onClick(View view) {
+        if(view==signup){
+            FragmentSignup fs = new FragmentSignup();
+            getSupportFragmentManager().beginTransaction().replace(R.id.login_fragment,fs).commit();
+
+        }
+    }
+
+    public class Verify extends AsyncTask<String,Void,Integer>{
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
@@ -185,7 +205,12 @@ public class LoginActivity extends AppCompatActivity {
                 pstmt.setInt(1,Params[0]);
                 ResultSet rs = pstmt.executeQuery();
                 rs.next();
-                return rs.getString("name");
+               /* Log.e("string",rs.getString(1)+ rs.getString(2)+rs.getString(3));
+               sharedPreferences = getSharedPreferences(MyPrefs, Context.MODE_PRIVATE);
+                editor = sharedPreferences.edit();
+                editor.putString("gender",rs.getString(2));
+                editor.putString("dob",rs.getString(3));*/
+                return rs.getString(1);
             }catch (Exception e){
                 e.printStackTrace();
             }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.aryanikhil2.desido.R;
@@ -24,20 +25,20 @@ import java.sql.ResultSet;
  */
 public class FragmentSignup extends Fragment {
     EditText name,uName,pass,cPass,mobile,email,address;
-    Button reg;
+    ImageButton reg;
 
     public FragmentSignup(){
 
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.signup_frag, container, false);
-        name = (EditText)view.findViewById(R.id.editText4);
-        uName = (EditText)view.findViewById(R.id.editText5);
-        pass = (EditText)view.findViewById(R.id.editText6);
-        cPass = (EditText)view.findViewById(R.id.editText8);
-        email = (EditText)view.findViewById(R.id.editText9);
-        reg = (Button)view.findViewById(R.id.button);
+        View view = inflater.inflate(R.layout.signup, container, false);
+        name = (EditText)view.findViewById(R.id.editText2);
+        uName = (EditText)view.findViewById(R.id.editText3);
+        pass = (EditText)view.findViewById(R.id.editText10);
+        cPass = (EditText)view.findViewById(R.id.editText11);
+        email = (EditText)view.findViewById(R.id.editText7);
+        reg = (ImageButton)view.findViewById(R.id.button);
 
         reg.setOnClickListener(new View.OnClickListener() {
             @Override

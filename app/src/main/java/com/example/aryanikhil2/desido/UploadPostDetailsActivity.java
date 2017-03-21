@@ -1,6 +1,7 @@
 package com.example.aryanikhil2.desido;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -40,6 +41,7 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
     Button upload,cancel;
     Spinner category;
     int uid;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,7 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
         image = (ImageView)findViewById(R.id.imageView6);
         upload = (Button)findViewById(R.id.button9);
         cancel = (Button)findViewById(R.id.button8);
+        progressDialog = new ProgressDialog(this);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categoryOfPost, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -70,6 +73,8 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
         uid = getIntent().getIntExtra("userid", -1);
 
         if(imgFile.exists()){
+
+            Log.e("image","image exists");
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             image.setImageBitmap(myBitmap);
         }
@@ -85,9 +90,12 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Integer created = null;
                 if(hasContent(title) && hasContent(desc)){
                     try {
+                        progressDialog.setMessage("Uploading Image..");;
+                        progressDialog.show();
                         created = new CreateNewPost().execute(category.getSelectedItem().toString(), title.getText().toString(), desc.getText().toString(), imgFile.getAbsolutePath().toString()).get();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -114,10 +122,17 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
 
     class CreateNewPost extends AsyncTask<String,Void,Integer> {
 
+        @Override
+        protected void onPreExecute() {
+
+        }
+
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+               // Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+
                 if(con==null){
                     Log.e("Connection status","error");
                 }
@@ -140,6 +155,7 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
         }
 
         public void onPostExecute(Integer res){
+            progressDialog.dismiss();
         }
     }
 }
