@@ -52,7 +52,7 @@ public class FragmentFeeds extends Fragment {
     public TextView textView, loadMore;
 
     boolean loading = true;
-    int pastVisiblesItems, visibleItemCount, totalItemCount, offset = 0;
+    int pastVisiblesItems, visibleItemCount, totalItemCount, offset = 0, flag = -1;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.feeds_frag, container, false);
@@ -72,8 +72,10 @@ public class FragmentFeeds extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(48));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
+        //recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(48));
+        //recyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
+
+        //recyclerView.setAdapter(null);
 
         new DatabaseConnectivity().execute(3,0);
 
@@ -91,14 +93,15 @@ public class FragmentFeeds extends Fragment {
                     {
                         if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
                         {
-                            ++offset;
                             loading = false;
                             Log.v("...", "Last Item Wow !");
-                            recyclerView.setVisibility(View.GONE);
-                            loadProgressBar.setVisibility(View.VISIBLE);
-                            loadMore.setVisibility(View.VISIBLE);
-                            new DatabaseConnectivity().execute(3,offset*3);
-                            //Do pagination.. i.e. fetch new data
+                            if(flag < offset) {
+                                recyclerView.setVisibility(View.GONE);
+                                loadProgressBar.setVisibility(View.VISIBLE);
+                                loadMore.setVisibility(View.VISIBLE);
+
+                                new DatabaseConnectivity().execute(3, offset * 3);
+                            }
                         }
                     }
                 }
@@ -148,9 +151,8 @@ public class FragmentFeeds extends Fragment {
                 e.printStackTrace();
             }
             try{
-                String url;
-                url = "jdbc:postgresql://10.0.2.2:5432/desido";
-                Connection conn = DriverManager.getConnection(url,"postgres","5438");
+                Connection conn = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+                //Connection conn = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
                 ResultSet rs;
                 PreparedStatement ps = conn.prepareStatement("SELECT * FROM posts limit ? offset ?");
                 ps.setInt(1, params[0]);
@@ -195,10 +197,13 @@ public class FragmentFeeds extends Fragment {
                     }
                     listComments.add(listSubComments);
                 }
-                Log.e("Comments Fetched", listComments.toString());
+                flag = offset;
+                offset = listPId.size()/3;
+                loading = true;
+                //Log.e("Comments Fetched", listComments.toString());
                 ps.close();
                 conn.close();
-                Log.e("Success","Feeds retrieved successfully.");
+                //Log.e("Success","Feeds retrieved successfully. && offset = " + offset);
             }
             catch(SQLException e) {
                 Log.e("Error", "Error in getting feeds");

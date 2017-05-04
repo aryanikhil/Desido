@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -157,20 +158,17 @@ public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHold
                     }
                 });
 
-                final PopupWindow mPopupWindow = new PopupWindow(mView, size.x*90/100 , size.y*80/100,true);
+                final PopupWindow mPopupWindow = new PopupWindow(mView, size.x*90/100 , size.y*55/100,true);
                 mPopupWindow.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.comment_popup_style));
-                // make it focusable to show the keyboard to enter in `EditText`
-                mPopupWindow.setFocusable(true);
                 // make it outside touchable to dismiss the popup window
                 mPopupWindow.setOutsideTouchable(true);
-
                 // show the popup at bottom of the screen and set some margin at bottom ie,
-                mPopupWindow.showAtLocation(view, Gravity.BOTTOM, 0,100);
+                mPopupWindow.showAtLocation(view, Gravity.CENTER, 0,100);
             }
         });
     }
 
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
+    /*public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
             // pre-condition
@@ -187,7 +185,7 @@ public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHold
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
-    }
+    }*/
     @Override
     public int getItemCount() {
         return listTitle.size();
@@ -211,9 +209,8 @@ public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHold
                 e.printStackTrace();
             }
             try{
-                String url;
-                url = "jdbc:postgresql://10.0.2.2:5432/desido";
-                Connection conn = DriverManager.getConnection(url,"postgres","5438");
+                Connection conn = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+                //Connection conn = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
                 PreparedStatement ps = conn.prepareStatement("INSERT INTO feedback(uid, pid, info, timefeed) VALUES(?, ?, ?, ?)");
                 ps.setInt(1, Integer.parseInt(params[0]));
                 ps.setInt(2, Integer.parseInt(params[1]));
@@ -225,11 +222,9 @@ public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHold
                 ps.close();
                 conn.close();
                 Log.e("Success","Commented Successfully.");
-                //Toast.makeText(context, "Comment Posted!!", Toast.LENGTH_SHORT).show();
             }
             catch(SQLException e) {
                 Log.e("Error", "Error in posting comments");
-                //Toast.makeText(context, "Comment Not Posted!!", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
             return null;

@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-          <PrintLetterBarcodeData uid="509933354083" name="Sahil Ayank" gender="M" yob="1997" co="S/O Arun Kumar" loc="Masjid Village sigashwer Tola" vtc="Nawagarhi" po="Nawagarhi" dist="Monghyr" state="Bihar" pc="811211"/>

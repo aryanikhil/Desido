@@ -1,12 +1,8 @@
 package com.example.aryanikhil2.desido;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,8 +16,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.aryanikhil2.desido.LogIn.LoginActivity;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
@@ -29,7 +23,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by arya.nikhil2 on 14-03-2017.
@@ -130,8 +123,8 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-               // Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
                 Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+                //Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
 
                 if(con==null){
                     Log.e("Connection status","error");
@@ -142,6 +135,7 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
                 pstmt.setInt(1,uid);
                 File file = new File(Params[3]);
                 FileInputStream fis = new FileInputStream(file);
+                //org.apache.commons.io.FileUtils.copyInputStreamToFile(fis, file);
                 pstmt.setBinaryStream(2,fis,file.length());
                 pstmt.setString(3,Params[1]);
                 pstmt.setString(4,Params[2]);

@@ -1,25 +1,23 @@
 package com.example.aryanikhil2.desido.FragmentsMain;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.aryanikhil2.desido.LogIn.LoginActivity;
@@ -32,7 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
-import static android.graphics.BitmapFactory.decodeFile;
 
 /**
  * Created by Nikhil on 02-07-2016.
@@ -59,7 +56,18 @@ public class FragmentHome extends Fragment {
                 SharedPreferences sharedpreferences = getActivity().getSharedPreferences(LoginActivity.MyPrefs, Context.MODE_PRIVATE);
                 uid = sharedpreferences.getInt("userid",-1);
                 if(uid != -1) {
-                    dispatchTakePictureIntent();
+
+                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Check Permissions Now
+                        // Callback onRequestPermissionsResult interceptado na Activity MainActivity
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.CAMERA},
+                                1);
+                    } else {
+                        // permission has been granted, continue as usual
+                        dispatchTakePictureIntent();
+                    }
                 }
                 else{
                     Toast.makeText(getContext(),"Please login before posting!!",Toast.LENGTH_LONG).show();

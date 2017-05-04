@@ -1,13 +1,9 @@
 package com.example.aryanikhil2.desido.FragmentsMain;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,35 +26,23 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Date;
+
 import java.util.concurrent.ExecutionException;
-import java.util.function.LongFunction;
-
-import static com.example.aryanikhil2.desido.R.id.gender;
-import static com.example.aryanikhil2.desido.R.id.start;
-
 
 /**
  * Created by root on 15/3/17.
  */
 
-public class ProfileActivity extends android.support.v4.app.Fragment implements View.OnClickListener {
+public class FragmentProfile extends android.support.v4.app.Fragment implements View.OnClickListener {
 
-    public ProfileActivity() {
+    public FragmentProfile() {
 
 
     }
@@ -147,7 +131,7 @@ public class ProfileActivity extends android.support.v4.app.Fragment implements 
         IntentIntegrator integrator = new IntentIntegrator(getActivity()) {
             @Override
             protected void startActivityForResult(Intent intent, int code) {
-                ProfileActivity.this.startActivityForResult(intent, code);
+                FragmentProfile.this.startActivityForResult(intent, code);
             }
         };
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
@@ -178,7 +162,7 @@ public class ProfileActivity extends android.support.v4.app.Fragment implements 
                 //processScannedData(result.getContents());
                 try {
                     processScannedData(result.getContents());
-                    ProfileActivity pf = new ProfileActivity();
+                    FragmentProfile pf = new FragmentProfile();
                     getFragmentManager().beginTransaction().replace(R.id.profile_fragment,pf).commit();
 
 
@@ -253,9 +237,6 @@ public class ProfileActivity extends android.support.v4.app.Fragment implements 
 
 
             // display the data on screen
-
-
-            //ui.execute(21321,"M",1997,"ghar","sahil ayank");
 
             Log.e("shared preferneces", uid);
 
