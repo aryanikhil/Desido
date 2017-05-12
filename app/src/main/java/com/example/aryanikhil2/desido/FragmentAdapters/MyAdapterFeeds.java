@@ -7,32 +7,39 @@ package com.example.aryanikhil2.desido.FragmentAdapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.aryanikhil2.desido.LogIn.LoginActivity;
+import com.example.aryanikhil2.desido.MainActivity;
 import com.example.aryanikhil2.desido.R;
+import com.squareup.picasso.Picasso;
+import com.uploadcare.android.library.api.UploadcareClient;
+import com.uploadcare.android.library.api.UploadcareFile;
+import com.uploadcare.android.library.callbacks.UploadcareFileCallback;
+import com.uploadcare.android.library.exceptions.UploadcareApiException;
+import com.uploadcare.android.library.urls.CdnPathBuilder;
+import com.uploadcare.android.library.urls.Urls;
 
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -43,29 +50,31 @@ import java.util.Date;
 import java.util.List;
 
 public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHolder> {
-    private List<Integer> listPId = new ArrayList<Integer>();
-    private List<Integer> listRating = new ArrayList<Integer>();
-    private List<String> listTitle = new ArrayList<String>();
-    private List<String> listName = new ArrayList<String>();
-    private List<String> listDesc = new ArrayList<String>();
-    private List<Bitmap> listImg = new ArrayList<Bitmap>();
-    private List<Bitmap> listImgThumb = new ArrayList<Bitmap>();
-    private List<List<String>> listComments = new ArrayList<List<String>>();
+    private List<Integer> listPId = new ArrayList<>();
+    private List<Integer> listRating = new ArrayList<>();
+    private List<String> listTitle = new ArrayList<>();
+    private List<String> listName = new ArrayList<>();
+    private List<String> listDesc = new ArrayList<>();
+    private List<String> listImg = new ArrayList<>();
+    private List<String> listImgThumb = new ArrayList<>();
+    private List<List<String>> listComments = new ArrayList<>();
 
     LayoutInflater inflater;
     Context context;
 
-    public MyAdapterFeeds(List<Integer> listPId, List<String> listTitle, List<String> listName, List<String> listDesc, List<Integer> listRating,List<Bitmap> listImg, List<Bitmap> listImgThumb, List<List<String>> listComments,Context context){
+    UploadcareClient client;
+
+    public MyAdapterFeeds(List<Integer> listPId, List<String> listTitle, List<String> listName, List<String> listDesc, List<Integer> listRating, List<String> listImg, List<List<String>> listComments, Context context){
         this.listPId = listPId;
         this.listRating = listRating;
         this.listTitle = listTitle;
         this.listName = listName;
         this.listDesc = listDesc;
         this.listImg = listImg;
-        this.listImgThumb = listImgThumb;
         this.listComments = listComments;
         inflater = LayoutInflater.from(context);
         this.context = context;
+        this.client = new UploadcareClient(MainActivity.PUBLICKEY, MainActivity.PRIVATEKEY);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
@@ -94,7 +103,23 @@ public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHold
                     final PopupWindow mPopupWindow = new PopupWindow(mView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                     mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
                     ImageView postImage = (ImageView) mView.findViewById(R.id.imageView3);
-                    postImage.setImageBitmap(listImg.get(position));
+
+                    client.getFileAsync(context, listImg.get(position), new UploadcareFileCallback() {
+                        @Override
+                        public void onFailure(UploadcareApiException e) {
+                            Toast.makeText(context, "Image Fetch Error", Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onSuccess(UploadcareFile file) {
+                            CdnPathBuilder builder = file.cdnPath();
+                            URI url = Urls.cdn(builder);
+                            //builder.resizeWidth(250);
+                            //builder.cropCenter(250, 250);
+                            Picasso.with(context).load(url.toString()).into(postImage);
+                        }
+                    });
+
                     mPopupWindow.showAtLocation(postImage, Gravity.CENTER, 45, 0);
                     postImage.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -120,8 +145,22 @@ public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHold
         viewHolder.postTitle.setText(listTitle.get(i));
         viewHolder.postName.setText("@" + listName.get(i));
         viewHolder.postDesc.setText(listDesc.get(i));
-        viewHolder.postImageThumb.setImageBitmap(listImgThumb.get(i));
 
+        client.getFileAsync(context, listImg.get(i), new UploadcareFileCallback() {
+            @Override
+            public void onFailure(UploadcareApiException e) {
+                Toast.makeText(context, "Image Fetch Error", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onSuccess(UploadcareFile file) {
+                CdnPathBuilder builder = file.cdnPath();
+                URI url = Urls.cdn(builder);
+                //builder.resizeWidth(250);
+                //builder.cropCenter(250, 250);
+                Picasso.with(context).load(url.toString()).into(viewHolder.postImageThumb);
+            }
+        });
 
         viewHolder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +198,8 @@ public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHold
                 });
 
                 final PopupWindow mPopupWindow = new PopupWindow(mView, size.x*90/100 , size.y*55/100,true);
-                mPopupWindow.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.comment_popup_style));
+                //mPopupWindow.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.comment_popup_style));
+                mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.comment_popup_style));
                 // make it outside touchable to dismiss the popup window
                 mPopupWindow.setOutsideTouchable(true);
                 // show the popup at bottom of the screen and set some margin at bottom ie,
@@ -209,9 +249,9 @@ public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHold
                 e.printStackTrace();
             }
             try{
-                Connection conn = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
-                //Connection conn = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
-                PreparedStatement ps = conn.prepareStatement("INSERT INTO feedback(uid, pid, info, timefeed) VALUES(?, ?, ?, ?)");
+                //Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+                PreparedStatement ps = con.prepareStatement("INSERT INTO feedback(uid, pid, info, timefeed) VALUES(?, ?, ?, ?)");
                 ps.setInt(1, Integer.parseInt(params[0]));
                 ps.setInt(2, Integer.parseInt(params[1]));
                 ps.setString(3, params[2]);
@@ -220,7 +260,7 @@ public class MyAdapterFeeds extends RecyclerView.Adapter<MyAdapterFeeds.ViewHold
                 ps.executeUpdate();
 
                 ps.close();
-                conn.close();
+                con.close();
                 Log.e("Success","Commented Successfully.");
             }
             catch(SQLException e) {

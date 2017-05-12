@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
     TextView name;
     TextView uName;
     NavigationView navigationViewleft, navigationViewright;
-
+    public static final String PUBLICKEY = "49b5143118014a1c7de3";
+    public static final String PRIVATEKEY = "aa380349436ad16aa4cb";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         navigationViewleft = (NavigationView) findViewById(R.id.nav_left_view);
@@ -64,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_profile) {
                     FragmentProfile PF = new FragmentProfile();
                     getSupportFragmentManager().beginTransaction().replace(R.id.relView, PF).commit();
-
                 } else if (id == R.id.nav_login) {
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);

@@ -9,12 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.aryanikhil2.desido.R;
 
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,28 +22,29 @@ import java.sql.ResultSet;
  * Created by Nikhil on 25-07-2016.
  */
 public class FragmentSignup extends Fragment {
-    EditText name,uName,pass,cPass,mobile,email,address;
-    ImageButton reg;
+    EditText name,uName,pass,cPass,email;
+    Button reg;
 
     public FragmentSignup(){
 
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.signup, container, false);
-        name = (EditText)view.findViewById(R.id.editText2);
-        uName = (EditText)view.findViewById(R.id.editText3);
-        pass = (EditText)view.findViewById(R.id.editText10);
-        cPass = (EditText)view.findViewById(R.id.editText11);
-        email = (EditText)view.findViewById(R.id.editText7);
-        reg = (ImageButton)view.findViewById(R.id.button);
+        View view = inflater.inflate(R.layout.signup_frag, container, false);
+        name = (EditText)view.findViewById(R.id.editText);
+        uName = (EditText)view.findViewById(R.id.editText4);
+        pass = (EditText)view.findViewById(R.id.editText9);
+        cPass = (EditText)view.findViewById(R.id.editText12);
+        email = (EditText)view.findViewById(R.id.editText13);
+        reg = (Button)view.findViewById(R.id.button5);
+        name.requestFocus();
 
         reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String pass1 = pass.getText().toString();
                 String pass2 = cPass.getText().toString();
-
+                Toast.makeText(getContext(), "Signup signup", Toast.LENGTH_SHORT).show();
                 if(pass1.equals(pass2)){
                     if(hasContent(name) && hasContent(uName) && hasContent(pass) && hasContent(cPass) && hasContent(email) ){
                         Boolean validated = null;
@@ -79,6 +78,7 @@ public class FragmentSignup extends Fragment {
 
         return view;
     }
+
     public boolean hasContent(EditText et){
         if(et.getText().toString().trim().length()>0) return true;
         else{
@@ -92,7 +92,8 @@ public class FragmentSignup extends Fragment {
         public Boolean doInBackground(String... params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+                //Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
                 if(con==null){
                     Log.e("Connection status","Error");
                 }
@@ -118,8 +119,8 @@ public class FragmentSignup extends Fragment {
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-              //  Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+                //Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
 
                 if(con==null){
                     Log.e("Connection status","Error");

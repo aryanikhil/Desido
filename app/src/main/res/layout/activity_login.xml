@@ -8,48 +8,39 @@
     android:background="#FF7000">
 
 
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Orangesalt"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
     <ImageView
+        android:id="@+id/imageView4"
         android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/desido"
-        android:id="@+id/imageView5"
-        android:layout_marginBottom="421dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="150dp"
+        android:layout_above="@+id/editText2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="11dp"
+        app:srcCompat="@drawable/logo" />
 
-
-    <TextView
-        android:text="  and privacy policy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView5"
-        android:textSize="12sp"
-        android:layout_alignBaseline="@+id/textView2"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_toRightOf="@+id/imageView5"
-        android:layout_toEndOf="@+id/imageView5" />
-
-    <TextView
-        android:text="   terms of service"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:textSize="12sp"
-        android:layout_alignBaseline="@+id/textView2"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_toLeftOf="@+id/textView5"
-        android:layout_toStartOf="@+id/textView5" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="49dp"
-        android:id="@+id/textView2"
-        android:text="   By signing in, you agree with our"
-        android:textSize="12sp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+    <EditText
+        android:id="@+id/editText2"
+        style="@style/Widget.AppCompat.AutoCompleteTextView"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="#FF9500"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="textPersonName"
+        android:textColorHint="#FFFFFF"
+        android:textStyle="italic" />
 
     <EditText
         android:layout_width="250dp"
@@ -60,56 +51,54 @@
         android:textColorHint="#ffffff"
         android:textStyle="italic"
         android:id="@+id/editText10"
-        android:hint="       Password"
+        android:hint="Password"
         android:layout_below="@+id/editText2"
         android:layout_alignLeft="@+id/editText2"
-        android:layout_alignStart="@+id/editText2"
-        android:layout_alignRight="@+id/editText2"
-        android:layout_alignEnd="@+id/editText2" />
+        android:layout_alignStart="@+id/editText2" />
 
-    <ImageButton
+    <Button
+        android:id="@+id/button3"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        app:srcCompat="@drawable/signin"
-        android:layout_marginBottom="25dp"
-        android:id="@+id/imageButton3"
-        android:layout_above="@+id/textView5"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignEnd="@+id/editText10"
+        android:layout_alignLeft="@+id/textView9"
+        android:layout_alignRight="@+id/editText10"
+        android:layout_alignStart="@+id/textView9"
+        android:layout_below="@+id/editText10"
+        android:layout_marginTop="31dp"
+        android:background="@drawable/button_border"
+        android:text="Sign In"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        android:textStyle="italic" />
 
-    <ImageView
-        app:srcCompat="@drawable/image"
-        android:id="@+id/imageView7"
-        android:layout_marginBottom="61dp"
-        android:src="@drawable/image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_above="@+id/editText10"
-        android:layout_alignLeft="@+id/imageView5"
-        android:layout_alignStart="@+id/imageView5" />
-
-    <EditText
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/editText2"
-        android:hint="                Name/Email"
-        android:textColorHint="#FFFFFF"
-        android:textStyle="italic"
-        style="@style/Widget.AppCompat.AutoCompleteTextView"
-        android:background="#FF9500"
+    <Button
+        android:layout_width="200dp"
         android:layout_height="50dp"
-
-        android:layout_width="250dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:background="@drawable/button_border"
+        android:text="Sign Up"
+        android:textSize="20dp"
+        android:textStyle="italic"
+        android:textColor="#FFFFFF"
+        android:id="@+id/button4"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_below="@+id/button3"
+        android:layout_alignLeft="@+id/editText10"
+        android:layout_alignStart="@+id/editText10"
+        android:layout_alignRight="@+id/textView9"
+        android:layout_alignEnd="@+id/textView9" />
 
     <TextView
-        android:text="NOt Registered? Sign up Here"
+        android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:id="@+id/signup"
-        android:layout_below="@+id/textView5"
-        android:layout_alignRight="@+id/imageButton3"
-        android:layout_alignEnd="@+id/imageButton3" />
+        android:layout_marginBottom="12dp"
+        android:textColor="#FFFFFF"
+        android:text="By Signing In You Agree With Our Terms Of Services And Privacy Policy"
+        android:textSize="8sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/editText10"
+        android:layout_alignEnd="@+id/editText10" />
 
 </RelativeLayout>

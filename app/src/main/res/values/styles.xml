@@ -4,15 +4,15 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">#000000</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme1" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="LoginTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#E52800</item>
-        <item name="colorPrimaryDark">#CB1800</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">#D74315</item>
+        <item name="colorPrimaryDark">#BE3407</item>
+        <item name="colorAccent">#BE3407</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -20,7 +20,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

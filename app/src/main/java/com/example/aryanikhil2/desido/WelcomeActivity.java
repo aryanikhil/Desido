@@ -1,9 +1,5 @@
 package com.example.aryanikhil2.desido;
 
-/**
- * Created by sahil on 8/2/17.
- */
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,6 +9,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,25 +78,17 @@ public class WelcomeActivity extends AppCompatActivity {
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
-        btnSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchHomeScreen();
-            }
-        });
+        btnSkip.setOnClickListener(v -> launchHomeScreen());
 
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // checking for last page
-                // if last page home screen will be launched
-                int current = getItem(+1);
-                if (current < layouts.length) {
-                    // move to next screen
-                    viewPager.setCurrentItem(current);
-                } else {
-                    launchHomeScreen();
-                }
+        btnNext.setOnClickListener(v -> {
+            // checking for last page
+            // if last page home screen will be launched
+            int current = getItem(+1);
+            if (current < layouts.length) {
+                // move to next screen
+                viewPager.setCurrentItem(current);
+            } else {
+                launchHomeScreen();
             }
         });
 
@@ -116,7 +105,7 @@ public class WelcomeActivity extends AppCompatActivity {
         dotsLayout.removeAllViews();
         for (int i = 0; i < dots.length; i++) {
             dots[i] = new TextView(this);
-            dots[i].setText(Html.fromHtml("&#8226;"));
+            dots[i].setText(fromHtml("&#8226;"));
             dots[i].setTextSize(35);
             dots[i].setTextColor(colorsInactive[currentPage]);
             dotsLayout.addView(dots[i]);
@@ -125,7 +114,16 @@ public class WelcomeActivity extends AppCompatActivity {
         if (dots.length > 0)
             dots[currentPage].setTextColor(colorsActive[currentPage]);
     }
-
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html){
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(html);
+        }
+        return result;
+    }
     private int getItem(int i) {
         return viewPager.getCurrentItem() + i;
     }
@@ -156,21 +154,13 @@ public class WelcomeActivity extends AppCompatActivity {
 
             signup = (Button) findViewById(R.id.home_signup);
             login = (Button) findViewById(R.id.login);
-            signup.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FragmentSignup s = new FragmentSignup();
+            signup.setOnClickListener(view -> {
+                FragmentSignup s = new FragmentSignup();
 
-                    getSupportFragmentManager().beginTransaction().replace(R.id.relView,s).commit();
-                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.relView,s).commit();
             });
 
-            login.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
-                }
-            });
+            login.setOnClickListener(view -> startActivity(new Intent(WelcomeActivity.this, LoginActivity.class)));
 
         }
 
@@ -199,10 +189,10 @@ public class WelcomeActivity extends AppCompatActivity {
     /**
      * View pager adapter
      */
-    public class MyViewPagerAdapter extends PagerAdapter {
+    private class MyViewPagerAdapter extends PagerAdapter {
         private LayoutInflater layoutInflater;
 
-        public MyViewPagerAdapter() {
+        MyViewPagerAdapter() {
         }
 
         @Override

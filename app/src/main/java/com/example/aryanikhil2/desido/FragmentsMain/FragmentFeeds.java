@@ -1,11 +1,5 @@
 package com.example.aryanikhil2.desido.FragmentsMain;
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,8 +34,7 @@ public class FragmentFeeds extends Fragment {
     private List<String> listName = new ArrayList<String>();
     private List<String> listDesc = new ArrayList<String>();
     private List<Integer> listRating = new ArrayList<Integer>();
-    private List<Bitmap> listImg = new ArrayList<Bitmap>();
-    private List<Bitmap> listImgThumb = new ArrayList<Bitmap>();
+    private List<String> listImg = new ArrayList<>();
     private List<List<String>> listComments = new ArrayList<List<String>>();
 
     RecyclerView recyclerView;
@@ -71,11 +64,6 @@ public class FragmentFeeds extends Fragment {
 
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-
-        //recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(48));
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
-
-        //recyclerView.setAdapter(null);
 
         new DatabaseConnectivity().execute(3,0);
 
@@ -111,36 +99,6 @@ public class FragmentFeeds extends Fragment {
         return rootView;
     }
 
-    public class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
-
-        private final int mVerticalSpaceHeight;
-
-        public VerticalSpaceItemDecoration(int mVerticalSpaceHeight) {
-            this.mVerticalSpaceHeight = mVerticalSpaceHeight;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                   RecyclerView.State state) {
-            outRect.bottom = mVerticalSpaceHeight;
-        }
-    }
-    public class DividerItemDecoration extends RecyclerView.ItemDecoration {
-
-        private final int[] ATTRS = new int[]{android.R.attr.listDivider};
-
-        private Drawable mDivider;
-
-        /**
-         * Default divider will be used
-         */
-        public DividerItemDecoration(Context context) {
-            final TypedArray styledAttributes = context.obtainStyledAttributes(ATTRS);
-            mDivider = styledAttributes.getDrawable(0);
-            styledAttributes.recycle();
-        }
-    }
-
     class DatabaseConnectivity extends AsyncTask<Integer, Void, Integer> {
 
         public Integer doInBackground(Integer... params){
@@ -151,48 +109,44 @@ public class FragmentFeeds extends Fragment {
                 e.printStackTrace();
             }
             try{
-                Connection conn = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
-                //Connection conn = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+                //Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
                 ResultSet rs;
-                PreparedStatement ps = conn.prepareStatement("SELECT * FROM posts limit ? offset ?");
+                PreparedStatement ps = con.prepareStatement("SELECT * FROM posts limit ? offset ?");
                 ps.setInt(1, params[0]);
                 ps.setInt(2, params[1]);
                 rs = ps.executeQuery();
                 if(rs!=null) {
                     while (rs.next()) {
-                        listPId.add(rs.getInt(1));
-                        listUId.add(rs.getInt(2));
-                        listTitle.add(rs.getString(4));
-                        listDesc.add(rs.getString(5));
-                        listRating.add(rs.getInt(7));
-                        byte[] imgbytes = rs.getBytes(3);
-                        Bitmap img = BitmapFactory.decodeByteArray(imgbytes,0,imgbytes.length);
-                        listImg.add(img);
-                        img = Bitmap.createScaledBitmap(img,250,250,false);
-                        listImgThumb.add(img);
-                        //Log.e("Fetched", listPId.toString()+listTitle.toString());
+                        listPId.add(rs.getInt("pid"));
+                        listUId.add(rs.getInt("uid"));
+                        listTitle.add(rs.getString("title"));
+                        listDesc.add(rs.getString("info"));
+                        listRating.add(rs.getInt("rating"));
+                        listImg.add(rs.getString("pic"));
+                        //Log.e("Fetched", listImg.toString());
                     }
                 }
                 for(int i = 0; i < listUId.size(); ++i) {
-                    ps = conn.prepareStatement("Select name from users where uid = ?");
+                    ps = con.prepareStatement("Select name from users where uid = ?");
                     ps.setInt(1,listUId.get(i));
                     rs = ps.executeQuery();
                     if(rs!=null){
                         while(rs.next()){
-                            listName.add(rs.getString(1));
+                            listName.add(rs.getString("name"));
                         }
                     }
                     rs.close();
                 }
                 listComments.clear();
                 for(int i = 0; i < listPId.size(); ++i){
-                    ps = conn.prepareStatement("Select info from feedback where pid = ?");
+                    ps = con.prepareStatement("Select info from feedback where pid = ?");
                     ps.setInt(1,listPId.get(i));
                     rs = ps.executeQuery();
                     List<String> listSubComments = new ArrayList<String>();
                     if(rs != null){
                         while(rs.next()){
-                            listSubComments.add(rs.getString(1));
+                            listSubComments.add(rs.getString("info"));
                         }
                     }
                     listComments.add(listSubComments);
@@ -202,7 +156,7 @@ public class FragmentFeeds extends Fragment {
                 loading = true;
                 //Log.e("Comments Fetched", listComments.toString());
                 ps.close();
-                conn.close();
+                con.close();
                 //Log.e("Success","Feeds retrieved successfully. && offset = " + offset);
             }
             catch(SQLException e) {
@@ -219,7 +173,7 @@ public class FragmentFeeds extends Fragment {
             loadProgressBar.setVisibility(View.GONE);
             loadMore.setVisibility(View.GONE);
             if(result == 0) {
-                adapter = new MyAdapterFeeds(listPId, listTitle, listName, listDesc, listRating, listImg, listImgThumb, listComments, getActivity());
+                adapter = new MyAdapterFeeds(listPId, listTitle, listName, listDesc, listRating, listImg, listComments, getActivity());
                 recyclerView.setAdapter(adapter);
             }
             else{

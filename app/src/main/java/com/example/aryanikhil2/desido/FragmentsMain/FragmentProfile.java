@@ -1,6 +1,5 @@
 package com.example.aryanikhil2.desido.FragmentsMain;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,14 +56,14 @@ public class FragmentProfile extends android.support.v4.app.Fragment implements 
     ImageView pic;
     Button save, apply_semipro;
     public String username;
-
+    CheckedTextView dispName;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View profile = inflater.inflate(R.layout.activity_profile, container, false);
 
-
+        dispName = (CheckedTextView)profile.findViewById(R.id.textView);
         name = (TextView) profile.findViewById(R.id.name);
         uname = (TextView) profile.findViewById(R.id.username);
         upload = (TextView) profile.findViewById(R.id.upload);
@@ -75,11 +75,11 @@ public class FragmentProfile extends android.support.v4.app.Fragment implements 
         save = (Button) profile.findViewById(R.id.save);
         apply_semipro = (Button) profile.findViewById(R.id.semipro);
 
-
         SharedPreferences sharedpreferences = getActivity().getSharedPreferences(LoginActivity.MyPrefs, Context.MODE_PRIVATE);
         uid1 = sharedpreferences.getInt("userid", -1);
         if (uid1 != -1) {
             // do for the profileT
+            dispName.setText(sharedpreferences.getString("name", ""));
             name.setText(sharedpreferences.getString("name", ""));
             uname.setText(sharedpreferences.getString("username", ""));
             username = sharedpreferences.getString("username", "");
@@ -266,7 +266,6 @@ public class FragmentProfile extends android.support.v4.app.Fragment implements 
 
 
 class uploadId extends AsyncTask<String,Boolean,Boolean> {
-    private ProgressDialog progressDialog;
     Context context;
 
 
@@ -285,7 +284,8 @@ class uploadId extends AsyncTask<String,Boolean,Boolean> {
 
         try {
             Class.forName("org.postgresql.Driver");
-            Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido", "student", "student");
+            //Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido", "student", "student");
+            Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
             if (con == null) {
                 Log.e("Connection status", "error");
             }
@@ -325,8 +325,8 @@ class uploadId extends AsyncTask<String,Boolean,Boolean> {
     public Integer doInBackground(String... Params){
         try {
             Class.forName("org.postgresql.Driver");
-            // Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
-            Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
+            Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
+            //Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
 
             if(con==null){
                 Log.e("Connection status","Error");

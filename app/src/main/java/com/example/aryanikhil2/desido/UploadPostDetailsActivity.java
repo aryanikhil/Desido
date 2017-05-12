@@ -1,8 +1,8 @@
 package com.example.aryanikhil2.desido;
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,15 +14,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.uploadcare.android.library.api.UploadcareClient;
+import com.uploadcare.android.library.api.UploadcareFile;
+import com.uploadcare.android.library.callbacks.UploadcareFileCallback;
+import com.uploadcare.android.library.exceptions.UploadcareApiException;
+import com.uploadcare.android.library.upload.FileUploader;
+import com.uploadcare.android.library.upload.Uploader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by arya.nikhil2 on 14-03-2017.
@@ -34,19 +41,22 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
     Button upload,cancel;
     Spinner category;
     int uid;
-    ProgressDialog progressDialog;
+    View uploadLayout;
+    TextView statusTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uploadpost);
 
+        uploadLayout = findViewById(R.id.uploadLayout);
         category = (Spinner)findViewById(R.id.spinner);
         title = (EditText)findViewById(R.id.editText15);
         desc = (EditText)findViewById(R.id.editText16);
         image = (ImageView)findViewById(R.id.imageView6);
         upload = (Button)findViewById(R.id.button9);
         cancel = (Button)findViewById(R.id.button8);
-        progressDialog = new ProgressDialog(this);
+        statusTextView = (TextView) findViewById(R.id.status);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categoryOfPost, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -62,43 +72,70 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
             }
         });
 
-        File imgFile = new File(getIntent().getStringExtra("location"));
+        Uri fileUri = null;
+        String path = getIntent().getStringExtra("path");
         uid = getIntent().getIntExtra("userid", -1);
+        UploadcareClient client = new UploadcareClient(MainActivity.PUBLICKEY, MainActivity.PRIVATEKEY);
 
-        if(imgFile.exists()){
-
-            Log.e("image","image exists");
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+        if(!path.equals(null)) {
+            Bitmap myBitmap = BitmapFactory.decodeFile(path);
             image.setImageBitmap(myBitmap);
+            fileUri = Uri.fromFile(new File(path));
+        }else{
+            Log.e("File Path", "Path Error -> NULL");
         }
-
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                imgFile.delete();
+                if(getIntent().getExtras().get("location").toString().equals("camera")) {
+                    File img = new File(path);
+                    img.delete();
+                }
                 finish();
             }
         });
 
+        Uri finalFileUri = fileUri;
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Integer created = null;
+                final Integer[] created = {null};
                 if(hasContent(title) && hasContent(desc)){
                     try {
-                        progressDialog.setMessage("Uploading Image..");;
-                        progressDialog.show();
-                        created = new CreateNewPost().execute(category.getSelectedItem().toString(), title.getText().toString(), desc.getText().toString(), imgFile.getAbsolutePath().toString()).get();
+                        if(!Uri.EMPTY.equals(finalFileUri)){
+                            //Log.e("Image URL","URL Exists and is " + finalFileUri.toString());
+                            showProgressOrResult(true, "Uploading...");
+                            Uploader uploader = new FileUploader(client, finalFileUri, getBaseContext()).store(true);
+                            uploader.uploadAsync(new UploadcareFileCallback() {
+                                @Override
+                                public void onFailure(UploadcareApiException e) {
+                                    showProgressOrResult(false,
+                                            e.getLocalizedMessage());
+                                }
+                                @Override
+                                public void onSuccess(UploadcareFile file) {
+                                    Log.e("File Id", file.getFileId().toString());
+                                    try {
+                                        created[0] = new CreateNewPost().execute(category.getSelectedItem().toString(), title.getText().toString(), desc.getText().toString(), file.getFileId().toString()).get();
+                                        showProgressOrResult(false, "");
+                                        if(created[0] != 0) {
+                                            Toast.makeText(getApplicationContext(), "Posted Successfully!!", Toast.LENGTH_LONG).show();
+                                            finish();
+                                        }
+                                        else{
+                                            Toast.makeText(getApplicationContext(), "Sorry!! Couldn't Post!! Please Try Again!!", Toast.LENGTH_LONG).show();
+                                        }
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
-                    }
-                    if(created!=0) {
-                        Toast.makeText(getApplicationContext(), "Posted Successfully!!", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-                    else{
-                        Toast.makeText(getApplicationContext(), "Sorry!! Couldn't Post!! Please Try Again!!", Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -113,6 +150,16 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
         }
     }
 
+    private void showProgressOrResult(boolean progress, String message) {
+        if (progress) {
+            uploadLayout.setVisibility(View.GONE);
+            statusTextView.setVisibility(View.VISIBLE);
+            statusTextView.setText(message);
+        } else {
+            uploadLayout.setVisibility(View.VISIBLE);
+            statusTextView.setVisibility(View.GONE);
+        }
+    }
     class CreateNewPost extends AsyncTask<String,Void,Integer> {
 
         @Override
@@ -123,9 +170,8 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
         public Integer doInBackground(String... Params){
             try {
                 Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
                 //Connection con = DriverManager.getConnection("jdbc:postgresql://172.16.40.26:5432/student?currentSchema=desido","student","student");
-
+                Connection con = DriverManager.getConnection("jdbc:postgresql://10.0.2.2:5432/desido","postgres","5438");
                 if(con==null){
                     Log.e("Connection status","error");
                 }
@@ -133,10 +179,7 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
                 PreparedStatement pstmt = con.prepareStatement("INSERT INTO posts(uid,pic,title,info,category,timepost) VALUES(?,?,?,?,?,?)");
 
                 pstmt.setInt(1,uid);
-                File file = new File(Params[3]);
-                FileInputStream fis = new FileInputStream(file);
-                //org.apache.commons.io.FileUtils.copyInputStreamToFile(fis, file);
-                pstmt.setBinaryStream(2,fis,file.length());
+                pstmt.setString(2,Params[3]);
                 pstmt.setString(3,Params[1]);
                 pstmt.setString(4,Params[2]);
                 pstmt.setString(5,Params[0]);
@@ -149,7 +192,7 @@ public class UploadPostDetailsActivity extends AppCompatActivity {
         }
 
         public void onPostExecute(Integer res){
-            progressDialog.dismiss();
+
         }
     }
 }

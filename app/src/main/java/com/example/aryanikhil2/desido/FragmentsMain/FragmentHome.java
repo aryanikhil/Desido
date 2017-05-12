@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,8 +125,6 @@ public class FragmentHome extends Fragment {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
-        // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
@@ -134,8 +133,10 @@ public class FragmentHome extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1 && resultCode == RESULT_OK) {
             Intent uploadIntent = new Intent(getContext(), UploadPostDetailsActivity.class);
-            uploadIntent.putExtra("location", mCurrentPhotoPath);
+            uploadIntent.putExtra("location", "camera");
             uploadIntent.putExtra("userid", uid);
+            uploadIntent.putExtra("path", mCurrentPhotoPath);
+            Log.e("File Path", mCurrentPhotoPath);
             startActivity(uploadIntent);
         }
         else if(photoFile.length() == 0) photoFile.delete();
